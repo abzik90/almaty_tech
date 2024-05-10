@@ -17,7 +17,7 @@
             var map;
             let selectedMarker;
             let currentLocationMarker;
-            var currentLocation = JSON.parse(getCookie("location"));
+            var currentLocation = generateRandomCoordinates();
             console.log("current location:", currentLocation);
             function GetMap() {
                 map = new Microsoft.Maps.Map('#map', {

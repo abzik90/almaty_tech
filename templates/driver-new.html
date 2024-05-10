@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bing Maps Route Drawing</title>
+<script type='text/javascript' src='http://www.bing.com/api/maps/mapcontrol?key={{api_key}}'></script>
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+<h1>Bing Maps Route Drawing</h1>
+<div id="map"></div>
+<script>
+    var waypoints = [
+   [51.10547180124103,71.5812183362994],[51.17018281625876,71.3424783337372],[51.14290269045257,71.370360891174],[51.17321429784374,71.45874582365417],[51.11613712251441,71.52969265485245],[51.18550349891522,71.45220518512006],[51.08899527125192,71.38903379840133],[51.1084278359433,71.48386846615874]
+        // Add more waypoints as needed
+    ];
+
+    function loadMapScenario() {
+        var map = new Microsoft.Maps.Map(document.getElementById('map'), {
+            credentials: '{{api_key}}'
+        });
+
+        // Array of coordinate arrays [latitude, longitude]
+        const waypoints = [
+                [47.60357, -122.32945], // Seattle, WA
+                [34.05223, -118.24368], // Los Angeles, CA
+                [40.71278, -74.00594],  // New York City, NY
+                [51.50735, -0.12776]    // London, UK
+            ];
+
+            // Add pushpins for each waypoint
+            waypoints.forEach(coords => {
+                const pushpin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(coords[0], coords[1]));
+                map.entities.push(pushpin);
+            });
+    }
+</script>
+<script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?callback=loadMapScenario' async defer></script>
+</body>
+</html>

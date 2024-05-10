@@ -1,20 +1,51 @@
-// var referencePoints = [
-//     "Москва, Тверская",
-//     "Москва, Льва Толстого, 16",
-//     "Москва, Кремлевская набережная",
-//     "Москва, Новокузнецкая",
-//     "Москва, парк Сокольники"
-// ];
+// Инициализация карты
+var map = new ymaps.Map('map', {
+    center: [55.76, 37.64],
+    zoom: 10,
+    controls: []
+}, {
+    searchControlProvider: 'yandex#search'
+});
+var myPosition = new ymaps.Placemark([55.76, 37.64]);
+map.geoObjects.add(myPosition);
+
+myPosition.events.add('click', function (event, myPosition) {
+    // Получаем координаты выбранного места
+    var point = event.target.geometry.getCoordinates();
+
+    // Добавляем маркер на карту
+    var marker = new ymaps.Placemark(point);
+    map.geoObjects.add(marker);
+});
+var saveButton = document.getElementById('save-button');
+saveButton.addEventListener('click', function () {
+    // Получаем координаты маркера
+    var point = marker.geometry.getCoordinates();
+
+    // Сохраняем координаты в объект reference points
+    referencePoints.push(point);
+});
+var multiRouter = new ymaps.multiRouter.MultiRouter({
+    referencePoints: referencePoints
+});
+
+var route = multiRouter.route(from, to);
+
+map.geoObjects.add(route);
+
+
+
+
+// Объявляем набор опорных точек и массив индексов транзитных точек.
+var referencePoints = [
+    "Москва, Тверская",
+    "Москва, Льва Толстого, 16",
+    "Москва, Кремлевская набережная",
+    "Москва, Новокузнецкая"
+    // "Москва, парк Сокольники"
+];
 
 function init() {
-    // Объявляем набор опорных точек и массив индексов транзитных точек.
-    var referencePoints = [
-        "Москва, Тверская",
-        "Москва, Льва Толстого, 16",
-        "Москва, Кремлевская набережная",
-        "Москва, Новокузнецкая",
-        "Москва, парк Сокольники"
-    ];
     viaIndexes = [2];
 
     // Создаем мультимаршрут и настраиваем его внешний вид с помощью опций.
@@ -24,7 +55,7 @@ function init() {
     }, {
         // Внешний вид путевых точек.
         wayPointStartIconColor: "#333",
-        wayPointStartIconFillColor: "#B3B3B3",
+        wayPointStartIconFillColor: "#0000ff",
         // Задаем собственную картинку для последней путевой точки.
         wayPointFinishIconLayout: "default#image",
         wayPointFinishIconImageHref: "images/sokolniki.png",
@@ -34,9 +65,9 @@ function init() {
         // wayPointVisible:false,
 
         // Внешний вид транзитных точек.
-        viaPointIconRadius: 7,
-        viaPointIconFillColor: "#000088",
-        viaPointActiveIconFillColor: "#E63E92",
+        viaPointIconRadius: 10,
+        viaPointIconFillColor: "#0000ff",
+        viaPointActiveIconFillColor: "#0000ff",
         // Транзитные точки можно перетаскивать, при этом
         // маршрут будет перестраиваться.
         viaPointDraggable: true,
@@ -70,11 +101,7 @@ function init() {
     var removePointsButton = new ymaps.control.Button({
             data: {content: "Удалить промежуточные точки"},
             options: {selectOnClick: true}
-        }),
-        routingModeButton = new ymaps.control.Button({
-            data: {content: "Пешком"},
-            options: {selectOnClick: true}
-        });
+    });
 
     // Объявляем обработчики для кнопок.
     removePointsButton.events.add('select', function () {
@@ -90,12 +117,15 @@ function init() {
         customizeSecondPoint();
     });
 
-    routingModeButton.events.add('select', function () {
-        multiRoute.model.setParams({routingMode: 'pedestrian'}, true);
-    });
-
-    routingModeButton.events.add('deselect', function () {
-        multiRoute.model.setParams({routingMode: 'auto'}, true);
+    multiRoute.events.add('click', function (event, myPosition) {
+        // Получаем координаты выбранного места
+        var point = event.target.geometry.getCoordinates();
+    
+        // Добавляем маркер на карту
+        var marker = new ymaps.Placemark(point);
+        map.geoObjects.add(marker);
+        console.log("Hello Point");
+        console.log(marker);
     });
 
     // Функция настройки внешнего вида второй точки.
@@ -124,7 +154,7 @@ function init() {
     var myMap = new ymaps.Map('map', {
             center: [55.739625, 37.54120],
             zoom: 7,
-            controls: [removePointsButton, routingModeButton]
+            controls: [removePointsButton]
         }, {
             buttonMaxWidth: 300
         });
